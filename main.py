@@ -1,12 +1,27 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+import random
+import copy
+
+tempCopy = []
+
 
 class Grid:
     units = []
     SVVs = []
-    SVVsSum = []
 
+
+
+    def copyGrid(self, theGrid):
+        newUnits = []
+        for i in range(len(theGrid.units)):
+            newUnitsRow = []
+            for j in range(len(theGrid.units[i])):
+                aNewUnit = copy.deepcopy(theGrid.units[i][j])
+                newUnitsRow.append(aNewUnit)
+            newUnits.append(newUnitsRow)
+        return newUnits
 
     def convertCountToRGB(self, count):
         #sum up all of the numbers
@@ -42,10 +57,6 @@ class Grid:
             theLineDataFloat = []
             for number in theLineData[:-1]:
                 theLineDataFloat.append(float(number))
-            # self.SVVsSum[0] += theLineDataFloat[0]
-            # self.SVVsSum[1] += theLineDataFloat[1]
-            # self.SVVsSum[2] += theLinesDataFloat[2]
-            # self.SVVsSum[3] += theLinesDataFloat[3]
             theClass = theLineData[-1].strip()
             toAppend = None
             if theClass == "Iris-setosa":
@@ -64,6 +75,8 @@ class Grid:
 
         self.normalizeData()
 
+        random.shuffle(self.SVVs)
+
         # create units grid, values will be randomly chosen from normal distribution with mean of 0 and stdev of 1
         for i in range(20):
             currRow = []
@@ -76,6 +89,8 @@ class Grid:
                 currRow.append(theUnit)
 
             self.units.append(currRow)
+
+        tempCopy = copy.deepcopy(self.units)
 
     def findBMUAndUpdateGrid(self, SVV):
         # you dont compare a unit to another unit, you compare a sample value vector to a unit's weight vector
@@ -165,7 +180,7 @@ class Grid:
 
 
 
-    def __str__(self):
+    def showSOM(self):
         #print how many inputs maps to each unit - reset at beggining of each epoch, stop when hasn't really changes after a couple epochs
         #print out how many of each sample mapped to each unit
         # ret = ""
@@ -227,10 +242,18 @@ class Unit:
 
 #write a few tests to make sure it's working
 
+#iteration1
 theGrid = Grid()
 theGrid.initialize("data/iris.txt")
 theGrid.train()
-print(theGrid)
+theGrid.showSOM()
+#iteration2
+theGridCopy = theGrid.copyGrid(theGrid)
+theGrid.units = theGridCopy
+random.shuffle(theGrid.SVVs)
+theGrid.train()
+theGrid.showSOM()
+
 
 
 
