@@ -7,7 +7,7 @@ class Grid:
     SVVs = []
     SVVsSum = []
 
-#test comment
+
     def convertCountToRGB(self, count):
         #sum up all of the numbers
         total = 0
